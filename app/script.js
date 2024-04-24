@@ -123,7 +123,7 @@
 
   async function spin() {
 		init();
-		await new Promise((resolve) => setTimeout(resolve,  2000));
+		await new Promise((resolve) => setTimeout(resolve,  100));
     init(false, 1, 4);
 
 		// const beepInterval = setInterval(() => beep(100, 520, 0.1), 200); // Beep every 200ms
