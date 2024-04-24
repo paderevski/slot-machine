@@ -3,37 +3,41 @@
 
 	const items = [];
   const multiples = [
-		'2',
-		'3',
-		'4',
-		'-2',
-		'-3',
-		'$x$',
-		'$x^2$'
+		['2*',	'2'],
+		['3*',	'3'],
+		['4*',	'4'],
+		['-2*',	'-2'],
+		['-3*',	'-3'],
+		['-4*',	'-4'],
+		['x*',	'x'],
+		['x**2*',	'x^2'],
+		['x**3*',	'x^3'],
+		['2*x*',	'2x'],
+		['3*x**2*',		'3x^2'],
   ];
 	items.push(multiples);
 	const functions = [
-		'$\sin$',
-		'$\cos$',
-		'$\exp$',
-		'$\ln$'
+		['sin',	'\\sin'],
+		['cos',	'\\cos'],
+		['exp',	'\\exp'],
+		['ln',	'\\ln'],
 	];
 	items.push(functions);
 	const arguments = [
-		'$(x)$',
-		'$(2x)$',
-		'$(-2x)$',
-		'$(-3x)$',
-		'$(3x)$',
-		'$(x^2)$',
-		'$(x^3)$',
+		['x','(x)'],
+		['2*x','(2x)'],
+		['-2*x','(-2x)'],
+		['-3*x','(-3x)'],
+		['3*x','(3x)'],
+		['x**2','(x^2)'],
+		['x**3','(x^3)'],
 	]
 	items.push(arguments);
 	const additional = [
-		'$+1$',
-		'$-1$',
-		'$-x$',
-		'$-2x^2$',
+		['1', '1'],
+		['-1', '-1'],
+		['x', 'x'],
+		['-2*x**2', '-2x^2'],
 	]
 	items.push(additional);
 
@@ -62,6 +66,7 @@
 
   function init(firstInit = true, groups = 1, duration = 1) {
 		var doorCount = 0;
+		var sympyArray = [];
     for (const door of doors) {
       if (firstInit) {
         door.dataset.spinned = '0';
@@ -75,12 +80,18 @@
 
       if (!firstInit) {
         const arr = [];
+
+				theseItems = shuffle(items[doorCount]);
+				thisItemSympy = items[doorCount][items[doorCount].length - 1][0];
+				console.log("sympy = " + thisItemSympy);
+				latexItems = (items[doorCount]).map(x=>`$ ${x[1]}$`);
+
         for (let n = 0; n < (groups > 0 ? groups : 1); n++) {
-          arr.push(...items[doorCount]);
-          arr.push(...items[doorCount]);
-          arr.push(...items[doorCount]);
+          arr.push(...latexItems);
         }
-        pool.push(...shuffle(arr));
+
+				pool.push(...arr);
+				sympyArray.push(thisItemSympy);
 				doorCount += 1;
 
         boxesClone.addEventListener(
@@ -106,6 +117,7 @@
         );
       }
 
+			console.log("pool tail = "+pool[pool.length-1]);
       for (let i = pool.length - 1; i >= 0; i--) {
         const box = document.createElement('div');
         box.classList.add('box');
@@ -119,12 +131,21 @@
       boxesClone.style.transform = `translateY(-${door.clientHeight * (pool.length - 1)}px)`;
       door.replaceChild(boxesClone, boxes);
     }
+		if (sympyArray.length > 0) {
+			sympyString = `${sympyArray[0]}*${sympyArray[1]}(${sympyArray[2]})+${sympyArray[3]}`;
+			getAnswer(sympyString);
+		}
   }
+
+	async function getAnswer(sympyString) {
+		console.log("solving sympystring = ",sympyString);
+		calculate(sympyString,0,4);
+	}
 
   async function spin() {
 		init();
 		await new Promise((resolve) => setTimeout(resolve,  100));
-    init(false, 1, 4);
+    init(false, 4, 4);
 
 		// const beepInterval = setInterval(() => beep(100, 520, 0.1), 200); // Beep every 200ms
 
@@ -134,20 +155,20 @@
       boxes.style.transform = 'translateY(0)';
       await new Promise((resolve) => setTimeout(resolve, duration * 1000 / 2));
     }
-	  calculate("x-cos(x**3)",0,8);
-
 		// clearInterval(beepInterval); // Stop beeping after the spin
 
   }
 
-  function shuffle([...arr]) {
-    let m = arr.length;
-    while (10*m) {
-      const i = Math.floor(Math.random() * m--);
-      [arr[m], arr[i]] = [arr[i], arr[m]];
+	function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        // Generate a random index from 0 to i
+        let j = Math.floor(Math.random() * (i + 1));
+
+        // Swap elements at indices i and j
+        [array[i], array[j]] = [array[j], array[i]];
     }
-    return arr;
-  }
+    return array;
+}
 
 	async function loadPyodideAndPackages() {
     let pyodide = await loadPyodide();
@@ -187,13 +208,14 @@ def taylor(function,x0,n):
 
   async function calculate(expr,x0,n) {
 		console.log("Calculating " + expr)
-    try {
-      let result = pyodide.runPython(`
+		let body = `
 expr = sp.sympify(${expr})
-expr = taylor(expr,${x0},${n})
+expr = sp.series(expr,x,${x0},n=${n})
 sp.latex(expr)
-			`);
-			console.log(result)
+					`
+		console.log(body);
+    try {
+      let result = pyodide.runPython(body);
       console.log('Result:', result.toString());
 			placeholder = document.getElementById('placeholder');
 			answer = document.getElementsByClassName('answer');
