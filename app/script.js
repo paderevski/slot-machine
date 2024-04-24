@@ -189,8 +189,11 @@ def taylor(function,x0,n):
 		console.log("Calculating " + expr)
     try {
       let result = pyodide.runPython(`
-sp.sympify("3+x")
+expr = sp.sympify(${expr})
+expr = taylor(expr,${x0},${n})
+sp.latex(expr)
 			`);
+			console.log(result)
       console.log('Result:', result.toString());
 			placeholder = document.getElementById('placeholder');
 			answer = document.getElementsByClassName('answer');
