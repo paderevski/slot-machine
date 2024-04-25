@@ -44,6 +44,7 @@
   const doors = document.querySelectorAll('.door');
 
   document.querySelector('#spinner').addEventListener('click', spin);
+	document.querySelector('#reveal').addEventListener('click', reveal);
 
 	const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -185,6 +186,10 @@
 
   }
 
+	function reveal() {
+		answer = document.getElementsByClassName('answer');
+		answer[0].style.display = '';
+	}
 	function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         // Generate a random index from 0 to i
@@ -248,6 +253,7 @@ o.replace("+-", "-")
       console.log('Result:', result.toString());
 			placeholder = document.getElementById('placeholder');
 			answer = document.getElementsByClassName('answer');
+			answer[0].style.display = 'none';
 			placeholder.innerHTML = `\\(${result.toString()}\\)`;
 			MathJax.typeset([answer]);
     } catch (err) {
