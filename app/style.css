@@ -1,13 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap');
+
 body {
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
+	overflow: auto; /* Enable scrolling on the page */
+	background: #112233;
+}
+
+body::before {
+	content: '';
+	position: fixed; /* Fixed relative to the viewport */
+	top: 5%;
+	left: 5%;
+	width: 90%;
+	height: 90%;
+	background-image: url('taylor.jpeg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	opacity: 0.8; /* 50% transparency */
+	filter: blur(12px) brightness(70%) sepia(50%) saturate(50%);
+	z-index: -1; /* Send to back */
 }
 
 h1 {
-	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
-	color: #f8f8ff; /* Off-white color; you can adjust the color code to your preference */
+	font-family: 'Raleway', 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
+	color: #c8dde6; /* Off-white color; you can adjust the color code to your preference */
 	font-size: 48px; /* Large font size, can be adjusted according to your design */
 	text-align: center; /* Center alignment of the text */
 	margin: 20px 0; /* Adds space above and below the heading */
@@ -16,7 +36,7 @@ h1 {
 #app {
   width: 100%;
   height: 100%;
-  background: #1a2b45;
+  /* background: #1a2b45; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,7 +48,7 @@ h1 {
 }
 
 .door {
-  background: #fafafa;
+  background: #e1f2fa87;
   width: 200px;
   height: 110px;
   overflow: hidden;
@@ -46,6 +66,7 @@ h1 {
   justify-content: center;
   align-items: center;
   font-size: 3rem;
+	color: #754020f0;
 }
 
 .box.fade-in {
@@ -64,6 +85,7 @@ button {
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
+	background: #e1f2fa87;
 }
 
 .info {
@@ -75,8 +97,8 @@ button {
 
 .answer {
 	width: 75%;
-	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
-	color: #f8f8ff; /* Off-white color; you can adjust the color code to your preference */
+	font-family: 'Raleway', 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
+	color: #c8dde6; /* Off-white color; you can adjust the color code to your preference */
 	font-size: 48px; /* Large font size, can be adjusted according to your design */
 	text-align: center; /* Center alignment of the text */
 	margin: 20px 0; /* Adds space above and below the heading */
@@ -86,8 +108,8 @@ button {
 
 .instructions {
 	width: 75%;
-	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
-	color: #f8f8ff; /* Off-white color; you can adjust the color code to your preference */
+	font-family: 'Raleway', 'Arial', 'Helvetica Neue', Helvetica, sans-serif; /* Modern sans-serif font */
+	color: #c8dde6; /* Off-white color; you can adjust the color code to your preference */
 	font-size: 20px; /* Large font size, can be adjusted according to your design */
 	text-align: center; /* Center alignment of the text */
 	margin: 20px 0; /* Adds space above and below the heading */
