@@ -41,6 +41,8 @@
 		['+x**2', '+\\;x^2'],
 		['+3*x**2', '+\\;3x^2'],
 		['-x**3', '-\\;x^3'],
+		['+0',  '🐞'],
+		['+0',  '🐞'],
 	]
 	items.push(additional);
 
@@ -173,14 +175,15 @@
 	}
 
   async function spin() {
+    const spinSound = document.getElementById('spinSound');
+
 		init();
-		await new Promise((resolve) => setTimeout(resolve,  100));
+    spinSound.play();
+
+		await new Promise((resolve) => setTimeout(resolve,  200));
     init(false, 4, 4);
 
 		// const beepInterval = setInterval(() => beep(100, 520, 0.1), 200); // Beep every 200ms
-    const spinSound = document.getElementById('spinSound');
-		spinSound.loop = true;
-    spinSound.play();
 
     for (const door of doors) {
       const boxes = door.querySelector('.boxes');
@@ -270,8 +273,17 @@ o.replace("+-", "-")
     }
   }
 
+	function showButtons() {
+		instructions = document.getElementsByClassName('instructions');
+		instructions[0].innerHTML = 'Find the first four non-zero terms of the Maclaurin series for'
+		buttons = document.getElementsByClassName('buttons');
+		for (let i = 0; i < buttons.length; i++) {
+			buttons[i].style.display = 'block';
+		}
+	}
+
 	setup().then( () => {
-		calculate("sin(x)",0,7);
 		init();
+		showButtons();
 	});
 })();

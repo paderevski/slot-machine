@@ -54,6 +54,7 @@ h1 {
 
 .buttons {
   margin: 1rem 0 2rem 0;
+	display: none;
 }
 
 button {
