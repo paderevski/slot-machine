@@ -38,6 +38,9 @@
 		['-1', '-1\\;'],
 		['+x', '+\\;x'],
 		['-2*x**2', '-\\;2x^2'],
+		['+x**2', '+\\;x^2'],
+		['+3*x**2', '+\\;3x^2'],
+		['-x**3', '-\\;x^3'],
 	]
 	items.push(additional);
 
@@ -175,20 +178,26 @@
     init(false, 4, 4);
 
 		// const beepInterval = setInterval(() => beep(100, 520, 0.1), 200); // Beep every 200ms
+    const spinSound = document.getElementById('spinSound');
+		spinSound.loop = true;
+    spinSound.play();
 
     for (const door of doors) {
       const boxes = door.querySelector('.boxes');
       const duration = parseInt(boxes.style.transitionDuration);
       boxes.style.transform = 'translateY(0)';
+			spinSound.play();
       await new Promise((resolve) => setTimeout(resolve, duration * 1000 / 2));
     }
-		// clearInterval(beepInterval); // Stop beeping after the spin
 
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+    spinSound.pause();  // Stop the sound after the spinning
+    spinSound.currentTime = 0;  // Rewind to the start
   }
 
 	function reveal() {
 		answer = document.getElementsByClassName('answer');
-		answer[0].style.display = '';
+		answer[0].style.display = 'block';
 	}
 	function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
