@@ -1,5 +1,6 @@
 (function () {
 	var pyodide;
+	window.ladyBug = false;
 
 	const items = [];
   const multiples = [
@@ -43,12 +44,14 @@
 		['-x**3', '-\\;x^3'],
 		['+0',  '🐞'],
 		['+0',  '🐞'],
+		['+0',  '🐞'],
+		['+0',  '🐞'],
 	]
 	items.push(additional);
 
   const doors = document.querySelectorAll('.door');
 
-  document.querySelector('#spinner').addEventListener('click', spin);
+  document.querySelector('#spinner').addEventListener('click', () => spin().then(() => {}));
 	document.querySelector('#reveal').addEventListener('click', reveal);
 
 	const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -150,6 +153,14 @@
       }
 
 			console.log("pool tail = "+pool[pool.length-1]);
+			if (pool[pool.length-1] === '$ 🐞$') {
+				window.ladyBug = true;
+			} else {
+				window.ladyBug = false;
+			}
+
+			console.log("window.ladyBug = " + window.ladyBug);
+
       for (let i = pool.length - 1; i >= 0; i--) {
         const box = document.createElement('div');
         box.classList.add('box');
@@ -176,12 +187,26 @@
 
   async function spin() {
     const spinSound = document.getElementById('spinSound');
+    var winSound = document.getElementById('winSound');
+    var bugSound = document.getElementById('bugSound');
 
+
+		spinSound.pause();  // Stop the sound after the spinning
+    spinSound.currentTime = 0;  // Rewind to the start
+
+		spinSound.play();
 		init();
-    spinSound.play();
+
+
 
 		await new Promise((resolve) => setTimeout(resolve,  200));
     init(false, 4, 4);
+
+		console.log("checking ladyBug = ", window.ladyBug);
+		if (window.ladyBug) {
+			winSound = bugSound;
+		}
+
 
 		// const beepInterval = setInterval(() => beep(100, 520, 0.1), 200); // Beep every 200ms
 
@@ -194,6 +219,8 @@
     }
 
 		await new Promise((resolve) => setTimeout(resolve, 3000));
+		winSound.play();
+		winSound.currentTime = 0;
     spinSound.pause();  // Stop the sound after the spinning
     spinSound.currentTime = 0;  // Rewind to the start
   }
