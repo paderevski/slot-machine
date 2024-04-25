@@ -3,17 +3,17 @@
 
 	const items = [];
   const multiples = [
-		['2*',	'2'],
-		['3*',	'3'],
-		['4*',	'4'],
-		['-2*',	'-2'],
-		['-3*',	'-3'],
-		['-4*',	'-4'],
-		['x*',	'x'],
-		['x**2*',	'x^2'],
-		['x**3*',	'x^3'],
-		['2*x*',	'2x'],
-		['3*x**2*',		'3x^2'],
+		['2',	'2'],
+		['3',	'3'],
+		['4',	'4'],
+		['-2',	'-2'],
+		['-3',	'-3'],
+		['-4',	'-4'],
+		['x',	'x'],
+		['x**2',	'x^2'],
+		['x**3',	'x^3'],
+		['2*x',	'2x'],
+		['3*x**2',		'3x^2'],
   ];
 	items.push(multiples);
 	const functions = [
@@ -24,20 +24,20 @@
 	];
 	items.push(functions);
 	const arguments = [
-		['x','(x)'],
-		['2*x','(2x)'],
-		['-2*x','(-2x)'],
-		['-3*x','(-3x)'],
-		['3*x','(3x)'],
-		['x**2','(x^2)'],
-		['x**3','(x^3)'],
+		['+x','x'],
+		['+2*x','2x'],
+		['-2*x','-2x'],
+		['-3*x','-3x'],
+		['+3*x','3x'],
+		['+x**2','x^2'],
+		['-x**3','-x^3'],
 	]
 	items.push(arguments);
 	const additional = [
-		['1', '1'],
-		['-1', '-1'],
-		['x', 'x'],
-		['-2*x**2', '-2x^2'],
+		['+1', '+\\;1'],
+		['-1', '-1\\;'],
+		['+x', '+\\;x'],
+		['-2*x**2', '-\\;2x^2'],
 	]
 	items.push(additional);
 
@@ -64,8 +64,19 @@
 			}, duration);
 	}
 
+	function replaceCharacter(str, index, char) {
+    if (index >= 0 && index < str.length) { // Check if index is within the string
+        let arr = str.split(''); // Convert string to array
+        arr[index] = char; // Replace character
+        return arr.join(''); // Convert array back to string
+    } else {
+        return str; // Return original string if index is out of bounds
+    }
+	}
+
   function init(firstInit = true, groups = 1, duration = 1) {
 		var doorCount = 0;
+		var lastSympy = "";
 		var sympyArray = [];
     for (const door of doors) {
       if (firstInit) {
@@ -81,10 +92,24 @@
       if (!firstInit) {
         const arr = [];
 
-				theseItems = shuffle(items[doorCount]);
-				thisItemSympy = items[doorCount][items[doorCount].length - 1][0];
-				console.log("sympy = " + thisItemSympy);
-				latexItems = (items[doorCount]).map(x=>`$ ${x[1]}$`);
+				shuffle(items[doorCount]);
+				if (lastSympy == "ln") {
+					thisItemSympy = "1+" + items[doorCount][items[doorCount].length - 1][0];
+					console.log("log sympy = " + thisItemSympy);
+
+					latexItems = (items[doorCount]).map(x=>{
+						var s = x[1];
+						if (s[0]=="-") {
+							return `$(1 ${s})$`;
+						} else {
+						return `$(1 + ${s})$`;
+						}
+					})
+				} else {
+					thisItemSympy = items[doorCount][items[doorCount].length - 1][0];
+					console.log("sympy = " + thisItemSympy);
+					latexItems = (items[doorCount]).map(x=>doorCount==2?`$(${x[1]})$`:`$ ${x[1]}$`);
+				}
 
         for (let n = 0; n < (groups > 0 ? groups : 1); n++) {
           arr.push(...latexItems);
@@ -92,6 +117,7 @@
 
 				pool.push(...arr);
 				sympyArray.push(thisItemSympy);
+				lastSympy = thisItemSympy;
 				doorCount += 1;
 
         boxesClone.addEventListener(
@@ -139,7 +165,7 @@
 
 	async function getAnswer(sympyString) {
 		console.log("solving sympystring = ",sympyString);
-		calculate(sympyString,0,4);
+		calculate(sympyString,0,16);
 	}
 
   async function spin() {
@@ -209,9 +235,9 @@ def taylor(function,x0,n):
   async function calculate(expr,x0,n) {
 		console.log("Calculating " + expr)
 		let body = `
-expr = sp.sympify(${expr})
-expr = sp.series(expr,x,${x0},n=${n})
-sp.latex(expr)
+e1 = sp.sympify(${expr})
+e2 = sp.series(e1,x,${x0},n=${n})
+sp.latex(e2)
 					`
 		console.log(body);
     try {
