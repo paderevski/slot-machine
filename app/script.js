@@ -236,8 +236,11 @@ def taylor(function,x0,n):
 		console.log("Calculating " + expr)
 		let body = `
 e1 = sp.sympify(${expr})
-e2 = sp.series(e1,x,${x0},n=${n})
-sp.latex(e2)
+e2 = e1.lseries(x,${x0})
+o = sp.latex(next(e2))
+for i in range(3):
+  o = o + "+" + sp.latex(next(e2))
+o.replace("+-", "-")
 					`
 		console.log(body);
     try {
